@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JECRC UNIVERSITY – SMART LIBRARY | Entry & Exit Management System</title>
+  
+  <!-- Modern Clean Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- System CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <!-- Chart.js for Interactive Visual Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- QR Code Generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- HTML5 QR Code Scanner (Camera) -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- ====================================================
+       TOP HEADER & BRAND IDENTITY
+       ==================================================== -->
+  <header class="top-header">
+    <div class="header-container">
+      <a href="#" class="brand-wrapper" onclick="window.app.switchView('scanner'); return false;">
+        <div class="brand-crest">JU</div>
+        <div class="brand-text">
+          <h1>JECRC UNIVERSITY – SMART LIBRARY</h1>
+          <div class="tagline">DIGITAL ENTRY &amp; EXIT SYSTEM • &ldquo;Scan. Enter. Study.&rdquo;</div>
+        </div>
+      </a>
+
+      <div class="header-center-info">
+        <div class="live-clock-badge">
+          <div class="clock-dot"></div>
+          <span id="header-live-clock">--:--:-- IST • Friday, 14 Nov 2026</span>
+        </div>
+        <div class="station-badge" id="header-station-badge">Gate A - Central Library</div>
+      </div>
+
+      <div class="header-right-actions">
+        <div id="header-occupancy-pill" class="nav-occupancy-pill" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25);">
+          <div class="occupancy-dot"></div>
+          Inside: <strong>12</strong> / 200 (6%)
+        </div>
+        <div id="header-auth-box">
+          <button class="btn btn-secondary btn-sm" id="btn-open-login" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.3);">
+            Admin Login
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================
+       NAVIGATION BAR
+       ==================================================== -->
+  <nav class="main-nav">
+    <div class="nav-container">
+      <ul class="nav-tabs">
+        <li class="nav-item active" data-view="scanner">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 9h2v6H7z"/><path d="M11 9h2v6h-2z"/><path d="M15 9h2v6h-2z"/></svg>
+          Access Scanner
+        </li>
+        <li class="nav-item" data-view="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          Librarian Dashboard
+        </li>
+        <li class="nav-item" data-view="students">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Student Registry
+        </li>
+        <li class="nav-item" data-view="attendance">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          Attendance Logs
+        </li>
+        <li class="nav-item" data-view="audit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          Audit Trail
+        </li>
+        <li class="nav-item" data-view="qr">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/></svg>
+          QR Emergency Pass
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ====================================================
+       MAIN CONTENT CONTAINER
+       ==================================================== -->
+  <main class="main-content">
+
+    <!-- DEMO MODE BANNER -->
+    <div class="demo-banner">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-weight: 800; background: #b45309; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.72rem; letter-spacing: 0.5px;">DEMO MODE</span>
+        <span>JECRC University Smart Library Prototype with 35 Fictional Student Records and Historical Attendance.</span>
+      </div>
+      <div class="demo-banner-actions">
+        <button class="btn btn-secondary btn-sm" id="btn-reset-demo-data" style="background: white;">
+          🔄 Load Demo Data
+        </button>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         VIEW 1: ACCESS SCANNER (CORE STATION SCREEN)
+         ==================================================== -->
+    <section id="view-scanner" class="scanner-view-container">
+      <div class="scanner-hero-card">
+
+        <!-- Station Mode Switcher -->
+        <div class="station-mode-switcher">
+          <button class="station-mode-btn mode-entry" data-mode="entry" data-station-name="Entry Gate A - Turnstile">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            Entry Station
+          </button>
+          <button class="station-mode-btn mode-exit" data-mode="exit" data-station-name="Exit Gate B - Turnstile">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Exit Station
+          </button>
+          <button class="station-mode-btn active mode-demo" data-mode="demo" data-station-name="Central Gate - Smart Dual Turnstile">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>
+            Demo Dual Gate
+          </button>
+        </div>
+
+        <div class="scanner-header">
+          <h2>SMART LIBRARY ACCESS</h2>
+          <p>Scan your JECRC University ID card or digital QR pass to enter or exit.</p>
+        </div>
+
+        <!-- Scanner Viewport Area -->
+        <div class="scanner-viewport-box">
+          <div class="scan-laser-beam"></div>
+
+          <div class="barcode-input-wrapper">
+            <svg class="barcode-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 9h2v6H7z"/><path d="M11 9h2v6h-2z"/><path d="M15 9h2v6h-2z"/>
+            </svg>
+            <input type="text"
+                   id="barcode-scanner-input"
+                   class="barcode-input"
+                   placeholder="Scan Barcode or Type ID..."
+                   autocomplete="off"
+                   autofocus>
+          </div>
+
+          <div class="scanner-status-indicator">
+            <div id="scanner-beacon" class="status-beacon"></div>
+            <span id="scanner-status-text">Scanner Ready • Waiting for ID Card Scan</span>
+          </div>
+        </div>
+
+        <!-- Secondary Scanner Actions -->
+        <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+          <button class="btn btn-secondary btn-sm" id="btn-toggle-camera-scan">
+            📷 Use Camera Scanner
+          </button>
+          <div style="font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 1.25rem;">
+            <span>Students Inside: <strong id="scanner-count-inside" style="color: #0f2a4a;">12</strong></span>
+            <span>Available Seats: <strong id="scanner-count-seats" style="color: #059669;">188</strong></span>
+          </div>
+        </div>
+
+        <!-- Confirmation Result Card (Animated on Scan) -->
+        <div id="scan-result-card" class="scan-result-card"></div>
+      </div>
+
+      <!-- Quick Test Bar for Demo / Testing without hardware scanner -->
+      <div class="quick-test-bar">
+        <div class="quick-test-title">
+          <span>⚡ Quick Test Simulator (1-Click Test Scans)</span>
+          <span style="font-weight: 500; text-transform: none; color: #64748b;">Click to simulate scanning without hardware:</span>
+        </div>
+        <div class="quick-test-buttons">
+          <button class="test-pill-btn pill-entry" onclick="window.app.scanner.processScan('JU20240113')">
+            🟢 Test Entry: Aditya Singhal (BBA • Outside)
+          </button>
+          <button class="test-pill-btn pill-entry" onclick="window.app.scanner.processScan('JU20240114')">
+            🟢 Test Entry: Sneha Soni (BBA • Outside)
+          </button>
+          <button class="test-pill-btn pill-exit" onclick="window.app.scanner.processScan('JU20240101')">
+            🔵 Test Exit: Aarav Sharma (CSE • Inside)
+          </button>
+          <button class="test-pill-btn pill-exit" onclick="window.app.scanner.processScan('JU20240103')">
+            🔵 Test Exit: Rohan Mehta (AI&amp;DS • Inside)
+          </button>
+          <button class="test-pill-btn pill-err" onclick="window.app.scanner.processScan('INVALID-9999')">
+            ⚠️ Test Error: Unregistered Barcode
+          </button>
+          <button class="test-pill-btn" onclick="window.app.switchView('qr')">
+            📱 Test Digital QR Pass Generator &rarr;
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         VIEW 2: LIBRARIAN DASHBOARD & ANALYTICS
+         ==================================================== -->
+    <section id="view-dashboard" class="dashboard-grid" style="display: none;">
+
+      <!-- 5 Summary KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-info">
+            <div class="kpi-label">Registered Students</div>
+            <div class="kpi-value" id="kpi-total-students">35</div>
+            <div class="kpi-subtext">Active University IDs</div>
+          </div>
+          <div class="kpi-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-green">
+          <div class="kpi-info">
+            <div class="kpi-label">Currently Inside</div>
+            <div class="kpi-value" id="kpi-inside" style="color: #059669;">12</div>
+            <div class="kpi-subtext">Live occupied seats</div>
+          </div>
+          <div class="kpi-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-gold">
+          <div class="kpi-info">
+            <div class="kpi-label">Total Visits Today</div>
+            <div class="kpi-value" id="kpi-visits-today">20</div>
+            <div class="kpi-subtext">Check-ins since 8:00 AM</div>
+          </div>
+          <div class="kpi-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-slate">
+          <div class="kpi-info">
+            <div class="kpi-label">Currently Outside</div>
+            <div class="kpi-value" id="kpi-outside">23</div>
+            <div class="kpi-subtext">Off-campus / Classes</div>
+          </div>
+          <div class="kpi-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-info">
+            <div class="kpi-label">Avg Visit Duration</div>
+            <div class="kpi-value" id="kpi-avg-duration">65m</div>
+            <div class="kpi-subtext">Study time per visit</div>
+          </div>
+          <div class="kpi-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Occupancy Section -->
+      <div class="occupancy-card">
+        <div class="occupancy-meter-box">
+          <div class="circular-gauge-container">
+            <svg class="circular-gauge-svg" viewBox="0 0 120 120">
+              <circle class="gauge-bg-circle" cx="60" cy="60" r="54"></circle>
+              <circle id="gauge-fill-path" class="gauge-fill-circle" cx="60" cy="60" r="54" style="stroke-dasharray: 339.29; stroke-dashoffset: 318;"></circle>
+            </svg>
+            <div class="gauge-center-text">
+              <div id="gauge-percent-text" class="percent">6.0%</div>
+              <div class="label">Occupancy</div>
+            </div>
+          </div>
+          <div style="font-weight: 700; color: #0f2a4a; font-size: 0.95rem;">Live Central Hall Capacity</div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f2a4a; margin-bottom: 0.2rem;">Live Seat Occupancy Monitor</h3>
+              <p style="font-size: 0.82rem; color: #64748b;">Updates automatically on barcode check-in and checkout scans.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-edit-capacity">
+              ⚙️ Configure Capacity
+            </button>
+          </div>
+
+          <div class="occupancy-details-grid">
+            <div class="occupancy-stat-box">
+              <div id="occ-box-inside" class="box-num" style="color: #059669;">12</div>
+              <div class="box-desc">Students Inside</div>
+            </div>
+            <div class="occupancy-stat-box">
+              <div id="occ-box-avail" class="box-num" style="color: #2563eb;">188</div>
+              <div class="box-desc">Available Seats</div>
+            </div>
+            <div class="occupancy-stat-box">
+              <div id="occ-box-cap" class="box-num" style="color: #475569;">200</div>
+              <div class="box-desc">Total Capacity</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Chart.js Interactive Visualizations -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h3>📈 Daily Visitors Trend (Past 7 Days)</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-daily-trend"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h3>⏰ Peak Visiting Hours (8 AM – 8 PM)</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-hourly-trend"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h3>🏛️ Department-wise Library Usage</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-dept-share"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h3>⏱️ Average Time Spent by Branch (Minutes)</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-avg-duration"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Live Activity Table -->
+      <div class="table-card">
+        <div class="table-toolbar">
+          <h3 style="font-size: 1rem; font-weight: 700; color: #0f2a4a;">Recent Check-in / Checkout Activity</h3>
+          <button class="btn btn-secondary btn-sm" onclick="window.app.switchView('attendance')">
+            View All Attendance Records &rarr;
+          </button>
+        </div>
+        <table class="primary-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Entry Time</th>
+              <th>Exit Time</th>
+            </tr>
+          </thead>
+          <tbody id="dashboard-recent-activity-body">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         VIEW 3: STUDENT REGISTRY & MANAGEMENT
+         ==================================================== -->
+    <section id="view-students" style="display: none;">
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f2a4a; margin-bottom: 0.2rem;">Student Management Directory</h2>
+            <div id="students-count-label" style="font-size: 0.8rem; color: #64748b;">Showing 35 students</div>
+          </div>
+
+          <div class="table-filters">
+            <div class="search-input-wrap">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="search-student-input" placeholder="Search by name, roll no, or barcode...">
+            </div>
+
+            <select id="filter-student-dept" class="filter-select">
+              <option value="ALL">All Departments</option>
+              <option value="Computer Science &amp; Engineering">Computer Science (CSE)</option>
+              <option value="AI &amp; Data Science">AI &amp; Data Science</option>
+              <option value="Electronics &amp; Comm. Engineering">Electronics (ECE)</option>
+              <option value="Mechanical Engineering">Mechanical Eng</option>
+              <option value="Civil Engineering">Civil Eng</option>
+              <option value="Business Administration (BBA)">BBA</option>
+              <option value="Computer Applications (BCA)">BCA</option>
+              <option value="School of Law (B.A. LL.B)">Law</option>
+              <option value="Biotechnology (B.Sc)">Biotechnology</option>
+            </select>
+
+            <select id="filter-student-status" class="filter-select">
+              <option value="ALL">All Status</option>
+              <option value="INSIDE">Currently Inside</option>
+              <option value="OUTSIDE">Currently Outside</option>
+            </select>
+
+            <button class="btn btn-primary btn-sm" id="btn-add-student-modal">
+              + Add Student
+            </button>
+          </div>
+        </div>
+
+        <table class="primary-table">
+          <thead>
+            <tr>
+              <th>Student Name &amp; Email</th>
+              <th>Roll Number</th>
+              <th>Barcode ID</th>
+              <th>Department &amp; Semester</th>
+              <th>Library Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="students-table-body">
+            <!-- Loaded dynamically from store -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         VIEW 4: ATTENDANCE & VISIT HISTORY
+         ==================================================== -->
+    <section id="view-attendance" style="display: none;">
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f2a4a; margin-bottom: 0.2rem;">Attendance &amp; Visit History</h2>
+            <div id="attendance-count-label" style="font-size: 0.8rem; color: #64748b;">Showing records</div>
+          </div>
+
+          <div class="table-filters">
+            <div class="search-input-wrap">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="search-attendance-input" placeholder="Search student or roll no...">
+            </div>
+
+            <select id="filter-attendance-dept" class="filter-select">
+              <option value="ALL">All Branches</option>
+              <option value="Computer Science &amp; Engineering">Computer Science</option>
+              <option value="AI &amp; Data Science">AI &amp; Data Science</option>
+              <option value="Electronics &amp; Comm. Engineering">Electronics</option>
+              <option value="Business Administration (BBA)">BBA</option>
+              <option value="Computer Applications (BCA)">BCA</option>
+              <option value="School of Law (B.A. LL.B)">Law</option>
+            </select>
+
+            <select id="filter-attendance-status" class="filter-select">
+              <option value="ALL">All Session Status</option>
+              <option value="ACTIVE">Active (Inside)</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="MANUAL_CORRECTED">Manual Corrected</option>
+            </select>
+
+            <button class="btn btn-secondary btn-sm" id="btn-export-csv">
+              📥 Export CSV
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-print-report">
+              🖨️ Print Report
+            </button>
+          </div>
+        </div>
+
+        <table class="primary-table">
+          <thead>
+            <tr>
+              <th>Student Name &amp; Roll</th>
+              <th>Department</th>
+              <th>Entry Time (IST)</th>
+              <th>Exit Time (IST)</th>
+              <th>Duration</th>
+              <th>Status</th>
+              <th>Station</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         VIEW 5: AUDIT TRAIL
+         ==================================================== -->
+    <section id="view-audit" style="display: none;">
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f2a4a; margin-bottom: 0.2rem;">System Audit Trail</h2>
+            <div style="font-size: 0.8rem; color: #64748b;">Complete log of administrative modifications, manual attendance corrections, and resets.</div>
+          </div>
+        </div>
+
+        <table class="primary-table">
+          <thead>
+            <tr>
+              <th>Audit ID</th>
+              <th>Timestamp (IST)</th>
+              <th>Admin User</th>
+              <th>Action</th>
+              <th>Description / Justification</th>
+            </tr>
+          </thead>
+          <tbody id="audit-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         VIEW 6: QR EMERGENCY BACKUP PASS
+         ==================================================== -->
+    <section id="view-qr" style="display: none;">
+      <div style="max-width: 620px; margin: 0 auto; background: white; border-radius: var(--radius-xl); border: 1px solid var(--bg-border); box-shadow: var(--shadow-lg); padding: 2.25rem 2rem; text-align: center;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/></svg>
+        </div>
+
+        <h2 style="font-size: 1.6rem; font-weight: 800; color: #0f2a4a; margin-bottom: 0.35rem;">Emergency Digital QR Pass</h2>
+        <p style="color: #64748b; font-size: 0.92rem; margin-bottom: 1.75rem;">
+          Forgot your physical plastic ID card? Enter your JECRC roll number or university email to generate a secure, 5-minute single-use entry/exit token.
+        </p>
+
+        <div style="display: flex; gap: 0.6rem; margin-bottom: 1.5rem;">
+          <input type="text" id="qr-student-identifier" class="form-control" placeholder="Enter Roll No (e.g. 21BCON101 or 22BBAN045)..." style="font-size: 1rem; text-align: center; font-family: var(--font-mono);">
+          <button class="btn btn-primary" id="btn-generate-qr" style="white-space: nowrap;">
+            Generate Pass
+          </button>
+        </div>
+
+        <div style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 1rem;">
+          Quick test rolls: <code>21BCON101</code>, <code>22BBAN045</code>, <code>21BTEC011</code>, <code>20BLAW004</code>
+        </div>
+
+        <!-- Result QR Container -->
+        <div id="qr-result-display" style="display: none; background: #f8fafc; border: 1px solid var(--bg-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-top: 1.5rem;">
+          <div id="qr-student-profile" style="margin-bottom: 1rem;"></div>
+          
+          <div class="qr-display-box">
+            <div id="qr-code-canvas"></div>
+            <div id="qr-timer-text" class="qr-countdown">Valid for: 5:00</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; font-family: var(--font-mono); margin-top: 0.4rem;" id="qr-token-string"></div>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <button class="btn btn-success" id="btn-test-scan-qr">
+              ⚡ Test Scan This QR Token at Station
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====================================================
+       MODALS
+       ==================================================== -->
+
+  <!-- Modal: Add Student -->
+  <div class="modal-backdrop" id="modal-add-student">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3>Register New Student</h3>
+        <button class="btn btn-secondary btn-sm btn-close-modal">&times;</button>
+      </div>
+      <form id="form-add-student">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="student-input-name" class="form-control" required placeholder="e.g. Riya Rathore">
+          </div>
+          <div class="form-group">
+            <label>Roll Number *</label>
+            <input type="text" id="student-input-roll" class="form-control" required placeholder="e.g. 23BCON401">
+          </div>
+          <div class="form-group">
+            <label>Barcode ID *</label>
+            <input type="text" id="student-input-barcode" class="form-control" required placeholder="e.g. JU20240199">
+          </div>
+          <div class="form-group">
+            <label>Department / Branch *</label>
+            <select id="student-input-dept" class="form-control" required>
+              <option value="Computer Science &amp; Engineering">Computer Science &amp; Engineering</option>
+              <option value="AI &amp; Data Science">AI &amp; Data Science</option>
+              <option value="Electronics &amp; Comm. Engineering">Electronics &amp; Comm. Engineering</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Business Administration (BBA)">Business Administration (BBA)</option>
+              <option value="Computer Applications (BCA)">Computer Applications (BCA)</option>
+              <option value="School of Law (B.A. LL.B)">School of Law (B.A. LL.B)</option>
+              <option value="Biotechnology (B.Sc)">Biotechnology (B.Sc)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <input type="number" id="student-input-sem" class="form-control" min="1" max="10" value="4">
+          </div>
+          <div class="form-group">
+            <label>University Email *</label>
+            <input type="email" id="student-input-email" class="form-control" required placeholder="e.g. riya.r@jecrcu.edu.in">
+          </div>
+          <div class="form-group">
+            <label>Contact Phone</label>
+            <input type="tel" id="student-input-phone" class="form-control" placeholder="e.g. 9829011299">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-close-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Student Details & History -->
+  <div class="modal-backdrop" id="modal-student-details">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3>Student Profile &amp; Visit History</h3>
+        <button class="btn btn-secondary btn-sm btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="student-details-content">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-close-modal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Manual Attendance Correction -->
+  <div class="modal-backdrop" id="modal-manual-correction">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3>Manual Attendance Correction (Audit Trail)</h3>
+        <button class="btn btn-secondary btn-sm btn-close-modal">&times;</button>
+      </div>
+      <form id="form-manual-correction">
+        <div class="modal-body">
+          <input type="hidden" id="corr-visit-id">
+          <div style="margin-bottom: 1rem; padding: 0.75rem; background: #f8fafc; border-radius: 6px;">
+            Student: <strong id="corr-student-name">--</strong>
+          </div>
+          <div class="form-group">
+            <label>Entry Timestamp (YYYY-MM-DD HH:MM:SS) *</label>
+            <input type="text" id="corr-entry-time" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Exit Timestamp (YYYY-MM-DD HH:MM:SS)</label>
+            <input type="text" id="corr-exit-time" class="form-control" placeholder="Leave blank if currently inside">
+          </div>
+          <div class="form-group">
+            <label>Session Status</label>
+            <select id="corr-status" class="form-control">
+              <option value="COMPLETED">COMPLETED</option>
+              <option value="ACTIVE">ACTIVE (Inside)</option>
+              <option value="MANUAL_CORRECTED">MANUAL_CORRECTED</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mandatory Justification / Reason *</label>
+            <textarea id="corr-reason" class="form-control" rows="3" required placeholder="State reason for manual adjustment (e.g. Scanner power outage at Exit Turnstile B)..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-close-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Correction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Library Capacity -->
+  <div class="modal-backdrop" id="modal-edit-capacity">
+    <div class="modal-window" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>Configure Library Capacity</h3>
+        <button class="btn btn-secondary btn-sm btn-close-modal">&times;</button>
+      </div>
+      <form id="form-edit-capacity">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Total Available Seats</label>
+            <input type="number" id="input-capacity-value" class="form-control" min="10" max="2000" value="200" required>
+            <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.35rem;">Default standard capacity for JECRC Central Library is 200 seats.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-close-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Capacity</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Admin Login -->
+  <div class="modal-backdrop" id="modal-admin-login">
+    <div class="modal-window" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3>Librarian / Admin Login</h3>
+        <button class="btn btn-secondary btn-sm btn-close-modal">&times;</button>
+      </div>
+      <form id="form-admin-login">
+        <div class="modal-body">
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 0.75rem; font-size: 0.8rem; color: #1e40af; margin-bottom: 1rem;">
+            Demo Credentials:<br>
+            Username: <strong>admin</strong> | Password: <strong>admin123</strong><br>
+            Username: <strong>librarian</strong> | Password: <strong>jecrc2026</strong>
+          </div>
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="login-username" class="form-control" required value="admin">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="login-password" class="form-control" required value="admin123">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-close-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Webcam Camera Scanner -->
+  <div class="modal-backdrop" id="camera-scanner-modal">
+    <div class="modal-window" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3>Webcam Barcode / QR Scanner</h3>
+        <button class="btn btn-secondary btn-sm" id="btn-close-camera">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <div id="camera-reader-box" style="width: 100%; min-height: 280px; background: #000; border-radius: 8px; overflow: hidden;"></div>
+        <p style="font-size: 0.82rem; color: #64748b; margin-top: 0.75rem;">
+          Align student barcode or QR pass in front of camera.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application Scripts -->
+  <script src="js/store.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/qr.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
